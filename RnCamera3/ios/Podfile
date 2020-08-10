@@ -3,13 +3,16 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'RnCamera2' do
+target 'RnCamera3' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-  target 'RnCamera2Tests' do
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
+  target 'RnCamera3Tests' do
     inherit! :complete
     # Pods for testing
   end
@@ -24,10 +27,10 @@ target 'RnCamera2' do
   end
 end
 
-target 'RnCamera2-tvOS' do
-  # Pods for RnCamera2-tvOS
+target 'RnCamera3-tvOS' do
+  # Pods for RnCamera3-tvOS
 
-  target 'RnCamera2-tvOSTests' do
+  target 'RnCamera3-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

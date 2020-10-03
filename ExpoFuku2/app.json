@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Fukushima food alert",
+    "slug": "FukuFoodAlert",
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-4002786977128549~4523646948" 
+      },
+      "bundleIdentifier": "com.ocr.fukuAlert",
+      "buildNumber": "1.0.2"
+    },
+    "android": {
+      "package": "com.ocr.fukuAlert",
+      "versionCode": 3,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-4002786977128549~4523646948" 
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

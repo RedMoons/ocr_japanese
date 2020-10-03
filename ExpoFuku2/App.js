@@ -1,0 +1,192 @@
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, Image, Button, Alert, TouchableOpacity, Platform } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import * as Permissions from 'expo-permissions'
+import { Root, Popup } from 'popup-ui'
+import {
+  setTestDeviceIDAsync,
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded
+} from "expo-ads-admob";
+
+export default function App() {
+
+  useEffect(() => {
+    // async function setDevice() {
+    //   await setTestDeviceIDAsync('35 737609 881230 1');
+    // };
+    // setDevice();
+  },[]);
+
+	const askForPermission = async () => {
+		const permissionResult = await Permissions.askAsync(Permissions.CAMERA)
+		if (permissionResult.status !== 'granted') {
+			alert('no permissions to access camera!', [{ text: 'ok' }])
+			return false
+		}
+		return true
+  }
+
+	takeImage = async () => {
+		// make sure that we have the permission
+		const hasPermission = await askForPermission()
+		if (!hasPermission) {
+			return
+		} else {
+			// launch the camera with the following settings
+			let image = await ImagePicker.launchCameraAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: true,
+				aspect: [3, 3],
+				quality: 1,
+				base64: true,
+			})
+			// make sure a image was taken:
+			if (!image.cancelled) {
+				const response = await fetch('http://52.185.172.211:5000/', {
+					method: 'POST',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					// send our base64 string as POST request
+					body: JSON.stringify({
+						imgsource: image.base64,
+					}),
+        })
+        const result = await response.text()
+        const parsed = result.replace(/[\n]+/g, '');
+        console.log(parsed)
+
+        if (parsed == "True") {
+          // TODO change to other alert UI
+          console.log(">>> true condition")
+          return (
+            <Root>
+              <View style={styles.container}>
+                {Popup.show({
+                  type: 'Danger',
+                  title: 'Please do not buy',
+                  button: true,
+                  textBody: 'There is Fukushima(福島)!!',
+                  buttonText: 'Ok',
+                  callback: () => Popup.hide()
+                })}
+              </View>
+            </Root>
+          );
+
+        }else {
+          console.log(">>> false condition")
+          return (
+            <Root>
+              <View style={styles.container}>
+                {Popup.show({
+                  type: 'Success',
+                  title: 'Good to buy',
+                  button: true,
+                  textBody: 'There is no Fukushima(福島)',
+                  buttonText: 'Ok',
+                  callback: () => Popup.hide()
+                })}
+              </View>
+            </Root>
+          );
+          
+          
+        }
+			}
+		}
+  }
+  
+
+
+  const setTestID = async () => {
+    await setTestDeviceIDAsync('EMULATOR');
+    // await setTestDeviceIDAsync('35 737609 881230 1');
+  }
+  const bannerError = (e) => {
+    console.log("An error : "+ e);
+    return;
+  }
+  const bannerAdReceived = () => {
+    console.log('banner ad received')
+  }
+
+  const showInterstitial = async () => {
+    AdMobInterstitial.setAdUnitID('ca-app-pub-4002786977128549/2057072189'); // Test ID, Replace with your-admob-unit-id
+    await setTestDeviceIDAsync('35 737609 881230 1');
+    try{ 
+      await AdMobInterstitial.requestAdAsync();
+      await AdMobInterstitial.showAdAsync();
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+
+  const showRewarded = async () => {
+    AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917'); // Test ID, Replace with your-admob-unit-id
+    try{
+      await AdMobRewarded.requestAdAsync();
+      await AdMobRewarded.showAdAsync();
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+  const setAdUnitId = () => {
+    if (Platform.OS === 'ios') {
+      AdMobBanner.adUnitID = "ca-app-pub-4002786977128549/2057072189"
+    }else {
+      AdMobBanner.adUnitID = "ca-app-pub-4002786977128549/5940943469"
+    }
+  }
+
+	return (
+    <Root>
+      <View style={styles.container}>
+        <Button title="Take a photo" onPress={takeImage} />
+
+        {/* <Button
+          style={styles.interstitialBanner}
+          title="InterstitialAd"
+          onPress={showInterstitial}
+        /> */}
+
+        {/* <Button
+          style={styles.rewardedBanner}
+          title="rewardedVideoAd"
+          onPress={showRewarded}
+        /> */}
+
+        <AdMobBanner
+          style={styles.bottomBanner}
+          bannerSize="fullBanner"
+          // this is test id
+          // adUnitID="ca-app-pub-3940256099942544/2934735716"
+          // actual my id
+          adUnitID="ca-app-pub-4002786977128549/2057072189"
+          // Test ID, Replace with your-admob-unit-id
+          servePersonalizedAds
+          onDidFailToReceiveAdWithError={bannerError}
+        /> 
+      </View>
+    </Root>
+	)
+}
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: '#fff',
+		alignItems: 'center',
+		justifyContent: 'center',
+  },
+  bottomBanner: {
+    position: "absolute",
+    bottom: 0
+  },
+})

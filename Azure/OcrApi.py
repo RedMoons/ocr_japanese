@@ -14,13 +14,15 @@ import io
 if 'COMPUTER_VISION_SUBSCRIPTION_KEY' in os.environ:
     subscription_key = os.environ['COMPUTER_VISION_SUBSCRIPTION_KEY']
 else:
-    print("\nSet the COMPUTER_VISION_SUBSCRIPTION_KEY environment variable.\n**Restart your shell or IDE for changes to take effect.**")
-    sys.exit()
+    subscription_key = "b9e4a29688b34ad3a41a72eb7498bfe8"
+    # print("\nSet the COMPUTER_VISION_SUBSCRIPTION_KEY environment variable.\n**Restart your shell or IDE for changes to take effect.**")
+    # sys.exit()
 
 
 if 'COMPUTER_VISION_ENDPOINT' in os.environ:
     endpoint = os.environ['COMPUTER_VISION_ENDPOINT']
 
+endpoint = "https://optical-character-recognition.cognitiveservices.azure.com/"
 ocr_url = endpoint + "vision/v3.0/ocr"
 
 # Set image_url to the URL of an image that you want to analyze.
@@ -77,7 +79,7 @@ word_infos
 # print("===res_conv=== : ", res_conv)
 f.close()
 f = open("./text.txt", "r")
-# print(f.read())
+print(f.read())
 
 with open('text.txt') as f:
     fuku = '福島'

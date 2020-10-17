@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Image, Button, Alert, TouchableOpacity, Platfor
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import { Root, Popup } from 'popup-ui'
+import { AppLoading } from 'expo'
+import { Asset } from 'expo-asset'
 import {
   setTestDeviceIDAsync,
   AdMobBanner,
@@ -12,14 +14,6 @@ import {
 } from "expo-ads-admob";
 
 export default function App() {
-
-  useEffect(() => {
-    // async function setDevice() {
-    //   await setTestDeviceIDAsync('35 737609 881230 1');
-    // };
-    // setDevice();
-  },[]);
-
 	const askForPermission = async () => {
 		const permissionResult = await Permissions.askAsync(Permissions.CAMERA)
 		if (permissionResult.status !== 'granted') {
@@ -29,7 +23,7 @@ export default function App() {
 		return true
   }
 
-	takeImage = async () => {
+	const takeImage = async () => {
 		// make sure that we have the permission
 		const hasPermission = await askForPermission()
 		if (!hasPermission) {
@@ -45,7 +39,7 @@ export default function App() {
 			})
 			// make sure a image was taken:
 			if (!image.cancelled) {
-				const response = await fetch('http://52.185.172.211:5000/', {
+				const response = await fetch('http://13.78.37.131:5000/', {
 					method: 'POST',
 					headers: {
 						Accept: 'application/json',
@@ -62,15 +56,14 @@ export default function App() {
 
         if (parsed == "True") {
           // TODO change to other alert UI
-          console.log(">>> true condition")
           return (
             <Root>
               <View style={styles.container}>
                 {Popup.show({
                   type: 'Danger',
-                  title: 'Please do not buy',
+                  title: 'Please check again',
                   button: true,
-                  textBody: 'There is Fukushima(福島)!!',
+                  textBody: 'There is Fukushima(福島) word',
                   buttonText: 'Ok',
                   callback: () => Popup.hide()
                 })}
@@ -79,26 +72,23 @@ export default function App() {
           );
 
         }else {
-          console.log(">>> false condition")
           return (
             <Root>
               <View style={styles.container}>
                 {Popup.show({
                   type: 'Success',
-                  title: 'Good to buy',
+                  title: 'Great',
                   button: true,
-                  textBody: 'There is no Fukushima(福島)',
+                  textBody: 'There is no Fukushima(福島) word',
                   buttonText: 'Ok',
                   callback: () => Popup.hide()
                 })}
               </View>
             </Root>
           );
-          
-          
         }
 			}
-		}
+    }
   }
   
 
@@ -111,9 +101,6 @@ export default function App() {
     console.log("An error : "+ e);
     return;
   }
-  const bannerAdReceived = () => {
-    console.log('banner ad received')
-  }
 
   const showInterstitial = async () => {
     AdMobInterstitial.setAdUnitID('ca-app-pub-4002786977128549/2057072189'); // Test ID, Replace with your-admob-unit-id
@@ -121,17 +108,6 @@ export default function App() {
     try{ 
       await AdMobInterstitial.requestAdAsync();
       await AdMobInterstitial.showAdAsync();
-    }
-    catch(e){
-      console.log(e);
-    }
-  }
-
-  const showRewarded = async () => {
-    AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917'); // Test ID, Replace with your-admob-unit-id
-    try{
-      await AdMobRewarded.requestAdAsync();
-      await AdMobRewarded.showAdAsync();
     }
     catch(e){
       console.log(e);
@@ -150,32 +126,25 @@ export default function App() {
       <View style={styles.container}>
         <Button title="Take a photo" onPress={takeImage} />
 
-        {/* <Button
-          style={styles.interstitialBanner}
-          title="InterstitialAd"
-          onPress={showInterstitial}
-        /> */}
-
-        {/* <Button
-          style={styles.rewardedBanner}
-          title="rewardedVideoAd"
-          onPress={showRewarded}
-        /> */}
-
+        <Text style={styles.explanation}>
+           * Please select low quality mode on camera. {"\n"}(if size is more than 4MB, it is not working well)
+        </Text>
+        <Text style={styles.explanation}>
+           
+        </Text>
         <AdMobBanner
           style={styles.bottomBanner}
-          bannerSize="fullBanner"
-          // this is test id
-          // adUnitID="ca-app-pub-3940256099942544/2934735716"
+          bannerSize="smartBannerPortrait"
+          // bannerSize="fullBanner"
           // actual my id
-          adUnitID="ca-app-pub-4002786977128549/2057072189"
-          // Test ID, Replace with your-admob-unit-id
+          adUnitID="ca-app-pub-4002786977128549/5940943469"
           servePersonalizedAds
           onDidFailToReceiveAdWithError={bannerError}
         /> 
       </View>
     </Root>
-	)
+  )
+
 }
 
 const styles = StyleSheet.create({
@@ -188,5 +157,9 @@ const styles = StyleSheet.create({
   bottomBanner: {
     position: "absolute",
     bottom: 0
+  },
+  explanation: {
+    position: "absolute",
+    bottom: 60
   },
 })

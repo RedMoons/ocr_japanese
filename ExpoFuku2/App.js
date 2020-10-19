@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, Button, Alert, TouchableOpacity, Platform } from 'react-native'
+import { StyleSheet, Text, View, Image, Button, Alert, TouchableOpacity, Platform, AppRegistry } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import { Root, Popup } from 'popup-ui'
-import { AppLoading } from 'expo'
-import { Asset } from 'expo-asset'
+import AnimatedLoader from 'react-native-animated-loader'
+
 import {
   setTestDeviceIDAsync,
   AdMobBanner,
@@ -14,6 +14,9 @@ import {
 } from "expo-ads-admob";
 
 export default function App() {
+  const [visible, setVisible] = useState(false);
+
+
 	const askForPermission = async () => {
 		const permissionResult = await Permissions.askAsync(Permissions.CAMERA)
 		if (permissionResult.status !== 'granted') {
@@ -39,6 +42,7 @@ export default function App() {
 			})
 			// make sure a image was taken:
 			if (!image.cancelled) {
+        {setVisible(true)}
 				const response = await fetch('http://13.78.37.131:5000/', {
 					method: 'POST',
 					headers: {
@@ -50,10 +54,11 @@ export default function App() {
 						imgsource: image.base64,
 					}),
         })
+        
         const result = await response.text()
+        {setVisible(false)}
         const parsed = result.replace(/[\n]+/g, '');
         console.log(parsed)
-
         if (parsed == "True") {
           // TODO change to other alert UI
           return (
@@ -121,8 +126,15 @@ export default function App() {
     }
   }
 
-	return (
+  return (
     <Root>
+      <AnimatedLoader
+        visible={visible}
+        overlayColor="rgba(255,255,255,0.75)"
+        source={require("./loader.json")}
+        animationStyle={styles.lottie}
+        speed={1}
+      />
       <View style={styles.container}>
         <Button title="Take a photo" onPress={takeImage} />
 
@@ -144,7 +156,6 @@ export default function App() {
       </View>
     </Root>
   )
-
 }
 
 const styles = StyleSheet.create({
@@ -162,4 +173,26 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 60
   },
+  lottie: {
+    width: 100,
+    height: 100
+  },
+
+  spContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#d35400',
+  },
+  spinner: {
+    marginBottom: 50
+  },
+
+  btn: {
+    marginTop: 20
+  },
+
+  text: {
+    color: "white"
+  }
 })

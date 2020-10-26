@@ -42,6 +42,7 @@ export default function App() {
 			})
 			// make sure a image was taken:
 			if (!image.cancelled) {
+        showInterstitial()
         {setVisible(true)}
 				const response = await fetch('http://13.78.37.131:5000/', {
 					method: 'POST',
@@ -59,6 +60,7 @@ export default function App() {
         {setVisible(false)}
         const parsed = result.replace(/[\n]+/g, '');
         console.log(parsed)
+        
         if (parsed == "True") {
           // TODO change to other alert UI
           return (
@@ -70,7 +72,7 @@ export default function App() {
                   button: true,
                   textBody: 'There is Fukushima(福島) word',
                   buttonText: 'Ok',
-                  callback: () => Popup.hide()
+                  callback: () => Popup.hide() 
                 })}
               </View>
             </Root>
@@ -89,6 +91,7 @@ export default function App() {
                   callback: () => Popup.hide()
                 })}
               </View>
+              
             </Root>
           );
         }
@@ -108,10 +111,11 @@ export default function App() {
   }
 
   const showInterstitial = async () => {
-    AdMobInterstitial.setAdUnitID('ca-app-pub-4002786977128549/2057072189'); // Test ID, Replace with your-admob-unit-id
-    await setTestDeviceIDAsync('35 737609 881230 1');
+    console.log("inter");
+    AdMobInterstitial.setAdUnitID('ca-app-pub-4002786977128549/4986764491');
+    // await setTestDeviceIDAsync('35 737609 881230 1');
     try{ 
-      await AdMobInterstitial.requestAdAsync();
+      await AdMobInterstitial.requestAdAsync({servePersonalizedAds: true});
       await AdMobInterstitial.showAdAsync();
     }
     catch(e){
@@ -125,7 +129,7 @@ export default function App() {
       AdMobBanner.adUnitID = "ca-app-pub-4002786977128549/5940943469"
     }
   }
-
+  
   return (
     <Root>
       <AnimatedLoader
